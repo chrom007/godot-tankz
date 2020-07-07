@@ -12,9 +12,6 @@ func create(_position, _direction):
 	yield(get_tree().create_timer(0.1), "timeout");
 	$Particles2D.speed_scale = 2.5;
 
-func _ready():
-	pass
-
 func _physics_process(delta):
 	position += velocity * delta * SPEED;
 
@@ -25,10 +22,8 @@ func destroy():
 	get_tree().get_root().add_child(explosive);
 	queue_free();
 
-
 func _on_Timer_timeout():
 	destroy();
-
 
 func _on_Bullet_body_entered(body : Node2D):
 	if (body.is_in_group("static")):

@@ -2,23 +2,26 @@ extends KinematicBody2D
 
 const HEAD_SPEED = 3;
 const ROT_SPEED = 2;
-const MOVE_SPEED = 6;
+const MOVE_SPEED = 7;
 const SHOT_DELAY = 1;
-const ROAD_BOOST = 1.75;
+const ROAD_BOOST = 1.85;
 
 var shoot_ready = true;
 var velocity := Vector2.ZERO;
 var BOOST = 1;
 
+var background : TextureRect = null;
 var tilemap : TileMap = null;
 
 func _ready():
 	tilemap = get_parent().get_node("Env/Roads");
+	background = get_parent().get_node("Background");
 
 func _process(delta):
 	moving(delta);
 	shooting();
 	boosting();
+	wrapping();
 
 func shooting():
 	if (Input.is_action_just_pressed("shoot") && shoot_ready):
@@ -64,13 +67,39 @@ func moving(delta):
 	velocity = (velocity * MOVE_SPEED * delta * 1000 * BOOST).rotated(rotation);
 	move_and_slide(velocity, Vector2.ZERO);
 
+func wrapping():
+	var pos := tilemap.world_to_map(global_position);
+	var cell := tilemap.get_cellv(pos);
+
+	if (cell == 0):
+		if (transform.origin.x > background.rect_size.x + 20):
+			transform.origin.x = -20;
+		if (transform.origin.y > background.rect_size.y + 20):
+			transform.origin.y = -20;
+		if (transform.origin.x < -20):
+			transform.origin.x = background.rect_size.x + 20;
+		if (transform.origin.y < -20):
+			transform.origin.y = background.rect_size.y + 20;
+	else:
+		if (transform.origin.x > background.rect_size.x):
+			transform.origin.x = background.rect_size.x;
+		if (transform.origin.y > background.rect_size.y):
+			transform.origin.y = background.rect_size.y;
+		if (transform.origin.x < 0):
+			transform.origin.x = 0;
+		if (transform.origin.y < 0):
+			transform.origin.y = 0;
+
 func boosting():
 	var pos := tilemap.world_to_map(global_position);
 	var cell := tilemap.get_cellv(pos);
 	if (cell == 0):
-		BOOST = ROAD_BOOST;
+		BOOST = lerp(BOOST, ROAD_BOOST, 0.02);
 	else:
-		BOOST = 1;
+		if (BOOST > 1):
+			BOOST = lerp(BOOST, 1, 0.02);
+
+	print(BOOST);
 
 func _on_ShootTimer_timeout():
 	shoot_ready = true;
