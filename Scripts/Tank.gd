@@ -13,7 +13,7 @@ var BOOST = 1;
 var tilemap : TileMap = null;
 
 func _ready():
-	tilemap = get_parent().get_node("TileMap");
+	tilemap = get_parent().get_node("Env/Roads");
 
 func _process(delta):
 	moving(delta);
@@ -26,11 +26,12 @@ func shooting():
 		var bullet = Bullet.instance();
 		var position = $Head/Muzzle.global_position;
 		var direction = $Head.global_rotation;
-		bullet.create(position, direction);
 		get_tree().get_root().add_child(bullet);
+		bullet.create(position, direction);
 
 		shoot_ready = false;
 		$ShootTimer.start(SHOT_DELAY);
+		$HeadAnim.play("shoot", -1, 7);
 
 func moving(delta):
 	velocity = Vector2.ZERO;
@@ -53,11 +54,11 @@ func moving(delta):
 	if (Input.is_action_pressed("head_right")):
 		$Head.rotate(HEAD_SPEED * delta);
 
-	if (velocity.x == 0 && $Anim.animation != "idle"):
-		$Anim.play("idle");
+	if (velocity.x == 0 && $BodyAnim.animation != "idle"):
+		$BodyAnim.play("idle");
 
-	if (velocity.x != 0 && $Anim.animation != "moving"):
-		$Anim.play("moving");
+	if (velocity.x != 0 && $BodyAnim.animation != "moving"):
+		$BodyAnim.play("moving");
 
 	#velocity.rotated()
 	velocity = (velocity * MOVE_SPEED * delta * 1000 * BOOST).rotated(rotation);
