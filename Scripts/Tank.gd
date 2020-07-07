@@ -17,11 +17,13 @@ func _ready():
 	tilemap = get_parent().get_node("Env/Roads");
 	background = get_parent().get_node("Background");
 
+
 func _process(delta):
 	moving(delta);
 	shooting();
 	boosting();
 	wrapping();
+
 
 func shooting():
 	if (Input.is_action_just_pressed("shoot") && shoot_ready):
@@ -36,20 +38,23 @@ func shooting():
 		$ShootTimer.start(SHOT_DELAY);
 		$HeadAnim.play("shoot", -1, 7);
 
+
 func moving(delta):
 	velocity = Vector2.ZERO;
-
-	if (Input.is_action_pressed("body_left")):
-		rotate(-ROT_SPEED * delta);
-
-	if (Input.is_action_pressed("body_right")):
-		rotate(ROT_SPEED * delta);
 
 	if (Input.is_action_pressed("body_forward")):
 		velocity.x = 1;
 
 	if (Input.is_action_pressed("body_back")):
-		velocity.x = -1;
+		velocity.x = -0.5;
+
+	if (Input.is_action_pressed("body_left")):
+		var md = 1 if velocity.x >= 0 else -1;
+		rotate(-ROT_SPEED * delta * md);
+
+	if (Input.is_action_pressed("body_right")):
+		var md = 1 if velocity.x >= 0 else -1;
+		rotate(ROT_SPEED * delta * md);
 
 	if (Input.is_action_pressed("head_left")):
 		$Head.rotate(-HEAD_SPEED * delta);
@@ -57,15 +62,18 @@ func moving(delta):
 	if (Input.is_action_pressed("head_right")):
 		$Head.rotate(HEAD_SPEED * delta);
 
-	if (velocity.x == 0 && $BodyAnim.animation != "idle"):
-		$BodyAnim.play("idle");
+	if (velocity.x == 0):
+		if ($BodyAnim.animation != "idle"):
+			$BodyAnim.play("idle");
 
-	if (velocity.x != 0 && $BodyAnim.animation != "moving"):
-		$BodyAnim.play("moving");
+	if (velocity.x != 0):
+		if ($BodyAnim.animation != "moving"):
+			$BodyAnim.play("moving");
 
 	#velocity.rotated()
 	velocity = (velocity * MOVE_SPEED * delta * 1000 * BOOST).rotated(rotation);
 	move_and_slide(velocity, Vector2.ZERO);
+
 
 func wrapping():
 	var pos := tilemap.world_to_map(global_position);
@@ -90,6 +98,7 @@ func wrapping():
 		if (transform.origin.y < 0):
 			transform.origin.y = 0;
 
+
 func boosting():
 	var pos := tilemap.world_to_map(global_position);
 	var cell := tilemap.get_cellv(pos);
@@ -99,7 +108,6 @@ func boosting():
 		if (BOOST > 1):
 			BOOST = lerp(BOOST, 1, 0.02);
 
-	print(BOOST);
 
 func _on_ShootTimer_timeout():
 	shoot_ready = true;
