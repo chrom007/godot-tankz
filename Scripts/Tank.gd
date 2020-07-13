@@ -17,8 +17,7 @@ func _ready():
 	tilemap = get_parent().get_node("Env/Roads");
 	background = get_parent().get_node("Background");
 
-
-func _process(delta):
+func _physics_process(delta):
 	moving(delta);
 	shooting();
 	boosting();
@@ -71,7 +70,7 @@ func moving(delta):
 			$BodyAnim.play("moving");
 
 	#velocity.rotated()
-	velocity = (velocity * MOVE_SPEED * delta * 1000 * BOOST).rotated(rotation);
+	velocity = (velocity * MOVE_SPEED * delta * 500 * BOOST).rotated(rotation);
 	move_and_slide(velocity, Vector2.ZERO);
 
 

@@ -1,17 +1,16 @@
 extends Node
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	print(123);
-	pass # Replace with function body.
+	pass;
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _on_Single_pressed():
+	get_tree().change_scene("res://Scenes/World.tscn");
+
+
+func _on_Multiplayer_pressed():
+	$Single.disabled = true;
+	$Multiplayer.disabled = true;
+	$Status.text = "Finding server...";
+	Network.client_start();

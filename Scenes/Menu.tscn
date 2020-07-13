@@ -1,0 +1,54 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scripts/Menu.gd" type="Script" id=1]
+
+[node name="Menu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BG" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0980392, 0.113725, 0.176471, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 472.0
+margin_top = 140.0
+margin_right = 509.0
+margin_bottom = 154.0
+rect_scale = Vector2( 3, 3 )
+text = "TankZ"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Single" type="Button" parent="."]
+margin_left = 448.0
+margin_top = 256.0
+margin_right = 608.0
+margin_bottom = 288.0
+text = "Single"
+
+[node name="Multiplayer" type="Button" parent="."]
+margin_left = 448.0
+margin_top = 300.0
+margin_right = 608.0
+margin_bottom = 332.0
+text = "Multiplayer"
+
+[node name="Status" type="Label" parent="."]
+margin_left = 448.0
+margin_top = 344.0
+margin_right = 608.0
+margin_bottom = 358.0
+align = 1
+valign = 1
+[connection signal="pressed" from="Single" to="." method="_on_Single_pressed"]
+[connection signal="pressed" from="Multiplayer" to="." method="_on_Multiplayer_pressed"]

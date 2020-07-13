@@ -1,6 +1,7 @@
 extends Node2D
 
 func _ready():
+	print("World");
 	randomize();
 	var childs = $Env.get_children();
 	for child in childs:
