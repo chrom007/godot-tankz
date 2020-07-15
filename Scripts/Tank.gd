@@ -9,33 +9,61 @@ const ROAD_BOOST = 1.85;
 var shoot_ready = true;
 var velocity := Vector2.ZERO;
 var BOOST = 1;
+var username = "USER";
 
 var background : TextureRect = null;
 var tilemap : TileMap = null;
 
+puppet var t_pos = Vector2(235, 90);
+puppet var t_rot = 90;
+puppet var h_rot = 0;
+
 func _ready():
 	tilemap = get_parent().get_node("Env/Roads");
 	background = get_parent().get_node("Background");
+	$Nick.text = username;
 
 func _physics_process(delta):
-	moving(delta);
-	shooting();
-	boosting();
-	wrapping();
+	if is_network_master():
+		moving(delta);
+		shooting();
+		boosting();
+		wrapping();
+
+		# puppet_position = position;
+		if (velocity != Vector2.ZERO):
+			t_pos = position;
+			rset_unreliable("t_pos", t_pos);
+		if (t_rot != rotation_degrees):
+			t_rot = rotation_degrees;
+			rset_unreliable("t_rot", t_rot);
+		if (h_rot != $Head.rotation_degrees):
+			h_rot = $Head.rotation_degrees;
+			rset_unreliable("h_rot", h_rot);
+	else:
+		position = t_pos;
+		rotation_degrees = t_rot;
+		$Head.rotation_degrees = h_rot;
 
 
 func shooting():
-	if (Input.is_action_just_pressed("shoot") && shoot_ready):
-		var Bullet = preload("res://Objects/Bullet.tscn");
-		var bullet = Bullet.instance();
-		var position = $Head/Muzzle.global_position;
-		var direction = $Head.global_rotation;
-		get_tree().get_root().add_child(bullet);
-		bullet.create(position, direction);
+	if (Input.is_action_just_pressed("shoot") && shoot_ready && is_network_master()):
+		if (Network.online):
+			rpc("shoot");
+		else:
+			shoot();
 
-		shoot_ready = false;
-		$ShootTimer.start(SHOT_DELAY);
-		$HeadAnim.play("shoot", -1, 7);
+puppetsync func shoot():
+	var Bullet = preload("res://Objects/Bullet.tscn");
+	var bullet = Bullet.instance();
+	var position = $Head/Muzzle.global_position;
+	var direction = $Head.global_rotation;
+	get_tree().get_root().add_child(bullet);
+	bullet.create(position, direction);
+
+	shoot_ready = false;
+	$ShootTimer.start(SHOT_DELAY);
+	$HeadAnim.play("shoot", -1, 7);
 
 
 func moving(delta):
@@ -50,10 +78,12 @@ func moving(delta):
 	if (Input.is_action_pressed("body_left")):
 		var md = 1 if velocity.x >= 0 else -1;
 		rotate(-ROT_SPEED * delta * md);
+#		$Head.rotate(ROT_SPEED * delta * md);
 
 	if (Input.is_action_pressed("body_right")):
 		var md = 1 if velocity.x >= 0 else -1;
 		rotate(ROT_SPEED * delta * md);
+#		$Head.rotate(-ROT_SPEED * delta * md);
 
 	if (Input.is_action_pressed("head_left")):
 		$Head.rotate(-HEAD_SPEED * delta);

@@ -1,6 +1,5 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://Objects/Tank.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Sprites/Grass1.png" type="Texture" id=2]
 [ext_resource path="res://Objects/Aircraft.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Tiles/SummerBig.tres" type="TileSet" id=4]
@@ -124,10 +123,6 @@ position = Vector2( 708, 364 )
 [node name="Home11" parent="Env" instance=ExtResource( 5 )]
 position = Vector2( 104, 484 )
 scale = Vector2( 2, 2 )
-
-[node name="Tank" parent="." instance=ExtResource( 1 )]
-position = Vector2( 232, 92 )
-rotation = 1.5708
 
 [node name="Aircraft" parent="." instance=ExtResource( 3 )]
 position = Vector2( 59, 179 )
