@@ -2,7 +2,9 @@ extends Node
 
 
 func _ready():
-	pass;
+	Network.connect("connection_failed", self, "connection_failed");
+	$Single.connect("pressed", self, "_on_Single_pressed");
+	$Multiplayer.connect("pressed", self, "_on_Multiplayer_pressed");
 
 
 func _on_Single_pressed():
@@ -15,6 +17,11 @@ func _on_Multiplayer_pressed():
 	$Status.text = "Finding server...";
 	var ip = $IP.text;
 	Network.client_start(ip);
+
+func connection_failed():
+	$Status.text = "Connection failed!";
+	$Single.disabled = false;
+	$Multiplayer.disabled = false;
 
 #	var qwe = preload("res://Scenes/World.tscn").instance();
 #	get_tree().get_root().add_child(qwe);

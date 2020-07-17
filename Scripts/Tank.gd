@@ -10,6 +10,7 @@ var shoot_ready = true;
 var velocity := Vector2.ZERO;
 var BOOST = 1;
 var username = "USER";
+var heals = 100;
 
 var background : TextureRect = null;
 var tilemap : TileMap = null;
@@ -24,23 +25,26 @@ func _ready():
 	$Nick.text = username;
 
 func _physics_process(delta):
-	if is_network_master():
+	if (!Network.online || (Network.online && is_network_master())):
 		moving(delta);
 		shooting();
 		boosting();
 		wrapping();
+		collisions();
 
 		# puppet_position = position;
-		if (velocity != Vector2.ZERO):
-			t_pos = position;
-			rset_unreliable("t_pos", t_pos);
-		if (t_rot != rotation_degrees):
-			t_rot = rotation_degrees;
-			rset_unreliable("t_rot", t_rot);
-		if (h_rot != $Head.rotation_degrees):
-			h_rot = $Head.rotation_degrees;
-			rset_unreliable("h_rot", h_rot);
-	else:
+		if (Network.online):
+			if (velocity != Vector2.ZERO):
+				t_pos = position;
+				rset_unreliable("t_pos", t_pos);
+			if (t_rot != rotation_degrees):
+				t_rot = rotation_degrees;
+				rset_unreliable("t_rot", t_rot);
+			if (h_rot != $Head.rotation_degrees):
+				h_rot = $Head.rotation_degrees;
+				rset_unreliable("h_rot", h_rot);
+
+	if (Network.online && !is_network_master()):
 		position = t_pos;
 		rotation_degrees = t_rot;
 		$Head.rotation_degrees = h_rot;
@@ -63,7 +67,18 @@ puppetsync func shoot():
 
 	shoot_ready = false;
 	$ShootTimer.start(SHOT_DELAY);
+	$Head/Line.hide();
 	$HeadAnim.play("shoot", -1, 7);
+
+
+func collisions():
+	if (get_slide_count() > 0):
+		for c in range(get_slide_count()):
+			var coll = get_slide_collision(c);
+			var collider = coll.collider;
+
+			if (collider.is_in_group("train")):
+				heals -= 1;
 
 
 func moving(delta):
@@ -140,3 +155,4 @@ func boosting():
 
 func _on_ShootTimer_timeout():
 	shoot_ready = true;
+	$Head/Line.show();

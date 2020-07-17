@@ -46,14 +46,6 @@ margin_right = 608.0
 margin_bottom = 332.0
 text = "Multiplayer"
 
-[node name="Status" type="Label" parent="."]
-margin_left = 448.0
-margin_top = 344.0
-margin_right = 608.0
-margin_bottom = 358.0
-align = 1
-valign = 1
-
 [node name="IP" type="LineEdit" parent="."]
 margin_left = 448.0
 margin_top = 340.0
@@ -62,5 +54,14 @@ margin_bottom = 364.0
 align = 1
 placeholder_text = "IP address:"
 placeholder_alpha = 0.3
-[connection signal="pressed" from="Single" to="." method="_on_Single_pressed"]
-[connection signal="pressed" from="Multiplayer" to="." method="_on_Multiplayer_pressed"]
+
+[node name="Status" type="Label" parent="."]
+margin_left = 448.0
+margin_top = 380.0
+margin_right = 608.0
+margin_bottom = 394.0
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

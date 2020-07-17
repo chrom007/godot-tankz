@@ -1,5 +1,6 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
+[ext_resource path="res://Objects/Train.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Sprites/Grass1.png" type="Texture" id=2]
 [ext_resource path="res://Objects/Aircraft.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Tiles/SummerBig.tres" type="TileSet" id=4]
@@ -7,6 +8,11 @@
 [ext_resource path="res://Objects/Tree.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Scripts/World.gd" type="Script" id=7]
 [ext_resource path="res://Objects/Lake.tscn" type="PackedScene" id=8]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 956, 480, 0, 0, 0, 0, 576, 480, 0, 0, 0, 0, 576, 800, 0, 0, 0, 0, 960, 800, 0, 0, 0, 0, 1120, 800, 0, 0, 0, 0, 1120, 480, 0, 0, 0, 0, 956, 480 )
+}
 
 [node name="World" type="Node2D"]
 script = ExtResource( 7 )
@@ -126,3 +132,15 @@ scale = Vector2( 2, 2 )
 
 [node name="Aircraft" parent="." instance=ExtResource( 3 )]
 position = Vector2( 59, 179 )
+
+[node name="TrainPath" type="Path2D" parent="."]
+z_index = 400
+curve = SubResource( 1 )
+
+[node name="Follow" type="PathFollow2D" parent="TrainPath"]
+position = Vector2( 601.362, 480 )
+rotation = 3.14159
+offset = 354.6
+lookahead = 10.0
+
+[node name="Train" parent="TrainPath/Follow" instance=ExtResource( 1 )]

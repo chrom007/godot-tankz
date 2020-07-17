@@ -1,6 +1,7 @@
 extends Node
 
 signal player_joined;
+signal connection_failed;
 
 var players = {};
 var online = false;
@@ -67,6 +68,7 @@ func _client_connected():
 
 func _client_failed():
 	print("Failed connected");
+	emit_signal("connection_failed");
 	peer = null;
 	online = false;
 
